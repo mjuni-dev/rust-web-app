@@ -1,8 +1,6 @@
 [workspace]
 resolver = "2"
-members = [
-    "services/webapp"
-]
+members = ["services/webapp"]
 
 [workspace.package]
 version = "0.1.0"
@@ -11,7 +9,8 @@ authors = ["Matt Wright <mjuni.dev@gmail.com>"]
 description = "SaaS Web Template"
 
 [workspace.dependencies]
+askama = "0.12.1"
 axum = "0.8.1"
 serde = "1.0.218"
-tokio = { version = "1.43.0",  features = ["rt-multi-thread"] }
+tokio = { version = "1.43.0", features = ["rt-multi-thread"] }
 tower = "0.5.2"

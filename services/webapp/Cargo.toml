@@ -4,7 +4,7 @@ version = "0.1.0"
 edition.workspace = true
 
 [dependencies]
-askama = "0.12.1"
+askama.workspace = true
 axum.workspace = true
 serde.workspace = true
 tokio.workspace = true
