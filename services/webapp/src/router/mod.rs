@@ -1,4 +1,5 @@
 use askama::Template;
+use axum::http::StatusCode;
 use axum::{Router, response::Html, routing::get};
 use tower_http::services::ServeDir;
 
@@ -27,6 +28,6 @@ async fn root() -> Html<String> {
             name: "Axum 0.8!!!",
         }
         .render()
-        .expect("error"),
+        .unwrap_or_else(|_| StatusCode::INTERNAL_SERVER_ERROR.to_string()),
     )
 }

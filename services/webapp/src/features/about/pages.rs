@@ -1,5 +1,5 @@
 use askama::Template;
-use axum::response::Html;
+use axum::{http::StatusCode, response::Html};
 
 #[derive(Template)]
 #[template(path = "about.html")]
@@ -8,7 +8,6 @@ pub struct AboutTemplate<'a> {
     name: &'a str,
 }
 
-
 pub async fn about() -> Html<String> {
     Html(
         AboutTemplate {
@@ -16,6 +15,6 @@ pub async fn about() -> Html<String> {
             name: "about template",
         }
         .render()
-        .expect("error"),
+        .unwrap_or_else(|_| StatusCode::INTERNAL_SERVER_ERROR.to_string()),
     )
 }
