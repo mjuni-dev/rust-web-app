@@ -60,7 +60,7 @@ impl JwtService {
 
 #[cfg(test)]
 mod tests {
-    use crate::error::AuthError;
+    use crate::{config::auth_config, error::AuthError};
 
     use super::JwtService;
     use std::time::SystemTime;
@@ -69,7 +69,8 @@ mod tests {
     const TEST_USER_ID: &str = "user-123";
 
     fn create_test_jwt_service() -> JwtService {
-        JwtService::new(TEST_SECRET, 24)
+        let cfg = &auth_config();
+        JwtService::new(cfg.token_key.as_bytes(), cfg.token_duration_hour)
     }
 
     #[test]
