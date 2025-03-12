@@ -13,19 +13,6 @@ pub trait Scheme {
     fn validate(&self, passwd: &str, passwd_ref: &str) -> Result<()>;
 }
 
-// #[derive(Debug)]
-// pub enum PasswordScheme {
-//     Argon2, // current default
-// }
-
-// impl std::fmt::Display for PasswordScheme {
-//     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         match self {
-//             PasswordScheme::Argon2 => write!(fmt, "01"),
-//         }
-//     }
-// }
-
 #[derive(Debug, PartialEq, Eq)]
 pub enum SchemeStatus {
     Ok,
