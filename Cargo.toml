@@ -2,6 +2,9 @@
 resolver = "2"
 members = ["features/auth", "services/webapp"]
 
+[workspace.lints.rust]
+unused = { level = "allow", priority = -1 }
+
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
@@ -10,6 +13,7 @@ description = "SaaS Web Template"
 
 [workspace.dependencies]
 askama = "0.12.1"
+async-trait = "0.1.87"
 axum = "0.8.1"
 serde = { version = "1.0.218", features = ["derive"] }
 tokio = { version = "1.43.0", features = ["rt-multi-thread"] }

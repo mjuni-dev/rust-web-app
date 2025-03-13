@@ -1,6 +1,6 @@
 use std::sync::OnceLock;
 
-use crate::Result;
+use crate::error::Result;
 
 pub fn auth_config() -> &'static AuthConfig {
     static INSTANCE: OnceLock<AuthConfig> = OnceLock::new();

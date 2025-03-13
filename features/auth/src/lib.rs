@@ -1,7 +1,10 @@
 mod config;
-pub mod error;
-pub mod jwt;
-pub mod password;
+mod error;
+mod jwt;
+mod models;
+mod password;
 mod pwd_scheme;
+mod repository;
+mod service;
 
-pub use self::error::{AuthError, Result};
+pub use error::AuthError;

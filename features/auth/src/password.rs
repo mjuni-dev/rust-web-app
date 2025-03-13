@@ -2,8 +2,7 @@ use std::str::FromStr;
 use uuid::Uuid;
 
 use crate::{
-    AuthError,
-    error::Result,
+    error::{AuthError, Result},
     pwd_scheme::{DEFAULT_SCHEME, SchemeStatus, error::SchemeError, get_scheme},
 };
 

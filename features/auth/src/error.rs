@@ -1,4 +1,4 @@
-use crate::pwd_scheme::error::SchemeError;
+use crate::{pwd_scheme::error::SchemeError, repository::error::RepoError};
 
 pub type Result<T> = std::result::Result<T, AuthError>;
 
@@ -7,7 +7,20 @@ pub enum AuthError {
     JwtError(String),
     Unauthorized,
 
+    EmailValidation,
+    PasswordValidation(String),
+    UserExists,
+    InvalidCredentials,
+    UserNotFound,
+
     Scheme(SchemeError),
+    Repository(RepoError),
+}
+
+impl From<RepoError> for AuthError {
+    fn from(value: RepoError) -> Self {
+        Self::Repository(value)
+    }
 }
 
 impl From<SchemeError> for AuthError {
@@ -21,7 +34,13 @@ impl std::fmt::Display for AuthError {
         match &self {
             AuthError::JwtError(e) => write!(fmt, "JWT Error: {e}"),
             AuthError::Unauthorized => write!(fmt, "Unauthorized access"),
+            AuthError::EmailValidation => write!(fmt, "Invalid email"),
             AuthError::Scheme(e) => write!(fmt, "Scheme error: {e}"),
+            AuthError::PasswordValidation(e) => write!(fmt, "Password validation: {e}"),
+            AuthError::UserExists => write!(fmt, "User already exists"),
+            AuthError::Repository(e) => write!(fmt, "Repository error: {e}"),
+            AuthError::InvalidCredentials => write!(fmt, "Invalid credentials"),
+            AuthError::UserNotFound => write!(fmt, "User not found"),
         }
     }
 }
