@@ -1,7 +1,7 @@
 use tokio::net::TcpListener;
 
-mod router;
 mod features;
+mod router;
 
 #[tokio::main]
 async fn main() {

@@ -4,6 +4,7 @@ use axum::{Router, response::Html, routing::get};
 use tower_http::services::ServeDir;
 
 use super::features::about::routes::about_routes;
+use super::features::auth::routes::auth_routes;
 use super::features::contact::routes::contact_routes;
 
 pub fn routes() -> Router {
@@ -11,6 +12,7 @@ pub fn routes() -> Router {
         .route("/", get(root))
         .merge(about_routes())
         .merge(contact_routes())
+        .nest("/auth", auth_routes())
         .nest_service("/assets", ServeDir::new("services/webapp/assets"))
 }
 

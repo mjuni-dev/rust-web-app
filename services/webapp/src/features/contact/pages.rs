@@ -3,7 +3,7 @@ use axum::{http::StatusCode, response::Html};
 
 #[derive(Template)]
 #[template(path = "contact.html")]
-pub struct ContactTemplate<'a> {
+struct ContactTemplate<'a> {
     title: &'a str,
     name: &'a str,
 }
