@@ -1,14 +1,14 @@
 use async_trait::async_trait;
 use std::{
     collections::HashMap,
-    sync::{Arc, RwLock, RwLockReadGuard},
+    sync::{Arc, RwLock},
 };
 use time::OffsetDateTime;
 
 use super::error::Result;
 use super::{UserRepositoryTrait, error::RepoError};
 
-use crate::{AuthError, models::User};
+use crate::models::User;
 
 pub struct InMemoryUserRepository {
     users: Arc<RwLock<HashMap<String, User>>>,
@@ -48,7 +48,7 @@ impl UserRepositoryTrait for InMemoryUserRepository {
 
         for user in users.values() {
             if user.email == email {
-                return (Ok(Some(user.clone())));
+                return Ok(Some(user.clone()));
             }
         }
 

@@ -1,23 +1,20 @@
-use axum::{Router, extract::Query, response::Html, routing::get};
-use serde::Deserialize;
+use axum::{
+    Router,
+    routing::{get, post},
+};
+use std::sync::Arc;
 
-use super::pages::{register::register_page, signin::signin_page};
+use super::pages::{
+    register::{register_handler, register_submit_handler},
+    signin::{signin_handler, signin_submit_handler},
+};
+use auth::AuthServiceTrait;
 
-#[derive(Debug, Deserialize)]
-struct ErrorQuery {
-    error: Option<String>,
-}
-
-pub fn auth_routes() -> Router {
+pub fn auth_routes<S: AuthServiceTrait>(auth_service: Arc<S>) -> Router {
     Router::new()
         .route("/signin", get(signin_handler))
+        .route("/signin", post(signin_submit_handler))
         .route("/register", get(register_handler))
-}
-
-async fn signin_handler(Query(query): Query<ErrorQuery>) -> Html<String> {
-    signin_page(query.error).await
-}
-
-async fn register_handler(Query(query): Query<ErrorQuery>) -> Html<String> {
-    register_page(query.error).await
+        .route("/register", post(register_submit_handler))
+        .with_state(auth_service)
 }

@@ -1,3 +1,4 @@
+use serde::Deserialize;
 use time::OffsetDateTime;
 use uuid::Uuid;
 
@@ -24,13 +25,13 @@ impl User {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
 pub struct Credentials {
     pub email: String,
     pub password: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
 pub struct RegisterUser {
     pub email: String,
     pub password: String,

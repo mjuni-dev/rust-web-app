@@ -19,11 +19,11 @@ pub trait AuthServiceTrait: Send + Sync + 'static {
 
 pub struct AuthService<R: UserRepositoryTrait> {
     user_repo: Arc<R>,
-    jwt_service: JwtService,
+    jwt_service: Arc<JwtService>,
 }
 
 impl<R: UserRepositoryTrait> AuthService<R> {
-    pub fn new(user_repo: Arc<R>, jwt_service: JwtService) -> Self {
+    pub fn new(user_repo: Arc<R>, jwt_service: Arc<JwtService>) -> Self {
         Self {
             user_repo,
             jwt_service,
@@ -70,7 +70,9 @@ impl<R: UserRepositoryTrait> AuthServiceTrait for AuthService<R> {
                 let new_hash = hash_password(&password::ContentToHash {
                     content: creds.password,
                     salt: Uuid::new_v4(),
-                });
+                })?;
+
+                user.password = new_hash;
 
                 self.user_repo.update_user(&user).await?;
             }
