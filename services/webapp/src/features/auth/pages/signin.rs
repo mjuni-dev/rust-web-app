@@ -2,16 +2,16 @@ use askama::Template;
 use axum::{http::StatusCode, response::Html};
 
 #[derive(Template)]
-#[template(path = "auth/login.html")]
-struct LoginTemplate<'a> {
+#[template(path = "auth/signin.html")]
+struct SignInTemplate<'a> {
     title: &'a str,
     error: Option<&'a str>,
 }
 
-pub async fn login_page(error: Option<String>) -> Html<String> {
+pub async fn signin_page(error: Option<String>) -> Html<String> {
     Html(
-        LoginTemplate {
-            title: "Login",
+        SignInTemplate {
+            title: "Sign In",
             error: error.as_deref(),
         }
         .render()

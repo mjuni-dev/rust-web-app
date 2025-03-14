@@ -13,7 +13,7 @@ use crate::repository::UserRepositoryTrait;
 #[async_trait]
 pub trait AuthServiceTrait: Send + Sync + 'static {
     async fn register(&self, user_data: RegisterUser) -> Result<User>;
-    async fn login(&self, creds: Credentials) -> Result<String>;
+    async fn signin(&self, creds: Credentials) -> Result<String>;
     async fn validate_token(&self, token: &str) -> Result<User>;
 }
 
@@ -58,7 +58,7 @@ impl<R: UserRepositoryTrait> AuthServiceTrait for AuthService<R> {
         Ok(user)
     }
 
-    async fn login(&self, creds: Credentials) -> Result<String> {
+    async fn signin(&self, creds: Credentials) -> Result<String> {
         let mut user = match self.user_repo.find_by_email(&creds.email).await? {
             Some(user) => user,
             None => return Err(AuthError::InvalidCredentials),
