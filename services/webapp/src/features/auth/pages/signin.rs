@@ -12,6 +12,7 @@ use axum_extra::extract::{
     cookie::{Cookie, SameSite},
 };
 use serde::Deserialize;
+use time::Duration;
 
 pub async fn signin_handler() -> Html<String> {
     signin_page(None).await
@@ -30,6 +31,7 @@ pub async fn signin_submit_handler(
         Ok(token) => {
             let cookie = Cookie::build(("auth_token", token))
                 .path("/")
+                .max_age(Duration::days(7))
                 .same_site(SameSite::Strict)
                 .http_only(true)
                 .build();

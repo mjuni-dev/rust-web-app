@@ -1,8 +1,8 @@
 use askama::Template;
-use axum::http::StatusCode;
-use axum::{Router, response::Html, routing::get};
+use axum::{Router, http::StatusCode, middleware, response::Html, routing::get};
 use tower_http::services::ServeDir;
 
+use crate::features::auth::routes::auth_middleware;
 use crate::state::AppState;
 
 use super::features::about::routes::about_routes;
@@ -11,11 +11,16 @@ use super::features::contact::routes::contact_routes;
 
 pub fn routes(state: AppState) -> Router {
     Router::new()
+        .layer(middleware::from_fn_with_state(
+            state.auth_service().clone(),
+            auth_middleware,
+        ))
         .route("/", get(root))
         .merge(about_routes())
         .merge(contact_routes())
         .nest("/auth", auth_routes(state.auth_service().clone()))
         .nest_service("/assets", ServeDir::new("services/webapp/assets"))
+    // .with_state(state)
 }
 
 #[derive(Template)]
