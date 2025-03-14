@@ -102,3 +102,89 @@ fn validate_email(email: &str) -> Result<bool> {
         Err(_) => Err(AuthError::EmailValidation),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{InMemoryUserRepository, password::ContentToHash};
+
+    use super::*;
+    // use auth::{
+    //     AuthService, AuthServiceImpl, Credentials, JwtService, RegisterUser, User,
+    //     password::{hash_password, needs_rehash, verify_password},
+    //     repository::memory::InMemoryUserRepository,
+    // };
+    use std::sync::Arc;
+
+    #[tokio::test]
+    async fn test_auth_service_end_to_end() {
+        // Setup dependencies
+        let user_repository = Arc::new(InMemoryUserRepository::new());
+        let jwt_service = Arc::new(JwtService::new(b"test_secret", 24));
+
+        // Create auth service
+        let auth_service = AuthService::new(user_repository, jwt_service.clone());
+
+        // Test data
+        let register_data = RegisterUser {
+            email: "test@example.com".to_string(),
+            password: "Password123!".to_string(),
+            name: "Test User".to_string(),
+        };
+
+        // Test registration
+        let registered_user = auth_service.register(register_data.clone()).await.unwrap();
+        assert_eq!(registered_user.email, "test@example.com");
+        assert_eq!(registered_user.name, "Test User".to_string());
+
+        // Test login
+        let credentials = Credentials {
+            email: "test@example.com".to_string(),
+            password: "Password123!".to_string(),
+        };
+
+        let token = auth_service.signin(credentials).await.unwrap();
+        assert!(!token.is_empty());
+
+        // Test token validation
+        let user = auth_service.validate_token(&token).await.unwrap();
+        assert_eq!(user.email, "test@example.com");
+
+        // Test invalid login
+        let invalid_credentials = Credentials {
+            email: "test@example.com".to_string(),
+            password: "WrongPassword123!".to_string(),
+        };
+
+        let login_result = auth_service.signin(invalid_credentials).await;
+        assert!(login_result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_duplicate_user_registration() {
+        // Setup dependencies
+        let user_repository = Arc::new(InMemoryUserRepository::new());
+        let jwt_service = Arc::new(JwtService::new(b"test_secret", 24));
+
+        // Create auth service
+        let auth_service = AuthService::new(user_repository, jwt_service.clone());
+
+        // Test data
+        let register_data = RegisterUser {
+            email: "duplicate@example.com".to_string(),
+            password: "Password123!".to_string(),
+            name: "Test User".to_string(),
+        };
+
+        // First registration should succeed
+        let registered_user = auth_service.register(register_data.clone()).await.unwrap();
+        assert_eq!(registered_user.email, "duplicate@example.com");
+
+        // Second registration with same email should fail
+        let duplicate_result = auth_service.register(register_data).await;
+        assert!(duplicate_result.is_err());
+        match duplicate_result {
+            Err(AuthError::UserExists) => (),
+            _ => panic!("Expected UserAlreadyExists error"),
+        }
+    }
+}
